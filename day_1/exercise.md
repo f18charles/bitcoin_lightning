@@ -414,3 +414,14 @@ You learned:
 - Explore blocks and transactions via CLI
 
 - Different address types and SegWit
+
+## Homework
+
+### 1. Send 5 more transactions between Alice and Bob
+
+
+### 2. Decode each transaction - understand inputs/outputs
+
+### 3. Create wallet "charlie" and do 3-way transactions
+
+### 4. Compare transaction sizes with different address types

@@ -15,6 +15,7 @@ def rpc(method, params=None, wallet=None):
     resp = requests.post(url, data=data, auth=("bootcamp", "bootcamp123"))
     return resp.json()
     
+# Blockchain info
 def show_blockchain_info():
     """
     TODO:
@@ -30,5 +31,24 @@ def show_blockchain_info():
     print(f"Blocks:          {info['blocks']}")
     print(f"Difficulty:          {info['difficulty']}")
 
-show_blockchain_info()
+# Wallet Balance
+def show_wallet_balance(wallet_name):
+    """
+    TODO:
+    1. Load wallet (try/except)
+    2. Call rpc("getbalance", [], wallet=wallet_name)
+    3. Print the balance
+    """
+    
+    try:
+        rpc("loadwallet", [wallet_name])
+    except:
+        pass
+    
+    balance = rpc("getbalance", [], wallet_name)
+    print(f"=== Wallet: {wallet_name} ===")
+    print(f"Balance: {balance['result']} BTC")
+
+# show_blockchain_info()
+show_wallet_balance("alice")
 

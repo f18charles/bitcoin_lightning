@@ -96,8 +96,29 @@ def decode_transactions(txid):
     for vout in tx['vout']:
         addr = vout['scriptPubKey'].get('address', '?')
         print(addr)
+        
+# Block details
+def show_block(blockhash=None):
+    """
+    TODO:
+    1. If no hash: rpc("getbestblockhash)
+    2. Call rpc("getblock", [blockhash, 1])
+    3. Print: height, hash, time, tx count
+    """
+    
+    if blockhash is None:
+        blockhash = rpc("getbestblockhash")['result']
+        
+    data = rpc("getblock", [blockhash, 1])
+    block = data['result']
+    
+    print(f"===Block #{block['height']} ===")
+    print(f"Hash: {block['hash'][:32]}...")
+    print(f"Time: {block['time']}")
+    print(f"Transactions: {block['nTx']}")
+
 # show_blockchain_info()
 # show_wallet_balance("alice")
 # list_transactions("alice", 3)
-decode_transactions("ce5a80ac46928829d4ed23edd00b1441a470c81ced80b6359730069f031304cd")
-
+# decode_transactions("ce5a80ac46928829d4ed23edd00b1441a470c81ced80b6359730069f031304cd")
+show_block()

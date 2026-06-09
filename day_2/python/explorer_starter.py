@@ -13,6 +13,7 @@ def rpc(method, params=None, wallet=None):
     })
     
     resp = requests.post(url, data=data, auth=("bootcamp", "bootcamp123"))
+    return resp.json()
     
 def show_blockchain_info():
     """
@@ -22,8 +23,12 @@ def show_blockchain_info():
     """
     
     data = rpc("getblockchaininfo")
+    info = data['result']
     
     print("===BlockChain Info===")
-    print
+    print(f"Chain:          {info['chain']}")
+    print(f"Blocks:          {info['blocks']}")
+    print(f"Difficulty:          {info['difficulty']}")
 
 show_blockchain_info()
+

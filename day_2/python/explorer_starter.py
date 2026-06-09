@@ -71,8 +71,33 @@ def list_transactions(wallet_name, count=5):
             direction = "OUT"
         
         print(f"{direction} {tx['amount']:+8f} BTC")
+        
+# Decode tx
+def decode_transactions(txid):
+    """
+    TODO:
+    1. Call rpc("getrawtransaction", [txid True])
+    2. Print inputs(vin) and outputs(vout)
+    """
+    
+    data = rpc("getrawtransaction", [txid, True])
+    tx = data['result']
+    
+    print(f"Size: {tx['size']} bytes")
+    
+    print("\nInputs:")
+    for vin in tx['vin']:
+        if 'coinbase' in vin:
+            print("  COINBASE (mining reward)")
+        else:
+            print(f"   From: {vin['txid'][:20]}...")
 
+    print("\nOutputs:")
+    for vout in tx['vout']:
+        addr = vout['scriptPubKey'].get('address', '?')
+        print(addr)
 # show_blockchain_info()
 # show_wallet_balance("alice")
-list_transactions("alice", 3)
+# list_transactions("alice", 3)
+decode_transactions("ce5a80ac46928829d4ed23edd00b1441a470c81ced80b6359730069f031304cd")
 

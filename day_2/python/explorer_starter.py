@@ -112,10 +112,11 @@ def show_block(blockhash=None):
     data = rpc("getblock", [blockhash, 1])
     block = data['result']
     
-    print(f"===Block #{block['height']} ===")
-    print(f"Hash: {block['hash'][:32]}...")
-    print(f"Time: {block['time']}")
-    print(f"Transactions: {block['nTx']}")
+    return {
+        "hash": block['hash'],
+        "Time": block['time'],
+        "Transactions": block['nTx']
+    }
 
 def show_mempool_fees():
     data = rpc("getmempoolinfo")
@@ -127,10 +128,58 @@ def show_mempool_fees():
     
     total_fees = mempool['total_fee']
     print(f"Total Fees: {total_fees:.8f} BTC")
+    
+def show_utxos(wallet_name):
+    try:
+        rpc("loadwallet", [wallet_name])
+    except:
+        pass
+    
+    data = rpc("listunspent", [0, 10000], wallet_name)
+    utxos = data['result']
+    
+    if not utxos:
+        print(f"=== UTXOs for {wallet_name} ===")
+        print("No unspent outputs found")
+        return
+    
+    total = 0
+    print(f"=== UTXOs for {wallet_name} ({len(utxos)} outputs) ===")
+    
+    for utxo in utxos:
+        total += utxo['amount']
+        confs = utxo['confirmations']
+        status = "confirmed" if confs > 0 else "UNCONFIRMED"
+        
+        print(f"\nTxID:          {utxo['txid'][:32]}...")
+        print(f"Output index:  {utxo['vout']}")
+        print(f"Amount:        {utxo['amount']:.8f} BTC")
+        print(f"Confirmations: {confs} ({status})")
+        print(f"Address:       {utxo.get('address', '?')}")
+        print(f"Spendable:     {utxo['spendable']}")
+    
+    print(f"\nTotal spendable: {total:.8f} BTC")
+    
+def total_block_fees(blockhash=None):
+    if blockhash is None:
+        blockhash = show_block()['hash']
+        
+    data = rpc("getblock", [blockhash, 2])
+    block = data['result']
+    
+    total_fees = sum(
+        abs(tx['fee'])
+        for tx in block['tx']
+        if 'coinbase' not in tx['vin'][0]  # skip coinbase
+    )
+    
+    print(total_fees)
 
 # show_blockchain_info()
-# show_wallet_balance("alice")
+# show_wallet_balance("bob")
 # list_transactions("alice", 3)
 # decode_transactions("ce5a80ac46928829d4ed23edd00b1441a470c81ced80b6359730069f031304cd")
 # show_block()
-show_mempool()
+# show_mempool_fees()
+# show_utxos("bob")
+total_block_fees()

@@ -174,6 +174,33 @@ def total_block_fees(blockhash=None):
     )
     
     print(total_fees)
+    
+def search_transactions_by_address(address):
+    """
+    Shows all UTXOs for any address using scantxoutset
+    """
+    data = rpc("scantxoutset", ["start", [f"addr({address})"]])
+    result = data['result']
+    
+    if not result or not result['unspents']:
+        print(f"=== {address} ===")
+        print("No UTXOs found")
+        return
+    
+    utxos = result['unspents']
+    total = result['total_amount']
+    
+    print(f"=== Transactions for {address} ===")
+    print(f"Found {len(utxos)} UTXOs\n")
+    
+    for utxo in sorted(utxos, key=lambda x: x['height']):
+        coinbase = " (coinbase)" if utxo.get('coinbase') else ""
+        print(f"TxID:   {utxo['txid'][:32]}...")
+        print(f"Amount: {utxo['amount']:.8f} BTC{coinbase}")
+        print(f"Block:  #{utxo['height']}  |  Confs: {utxo['confirmations']}")
+        print()
+    
+    print(f"Total: {total:.8f} BTC")
 
 # show_blockchain_info()
 # show_wallet_balance("bob")
@@ -182,4 +209,5 @@ def total_block_fees(blockhash=None):
 # show_block()
 # show_mempool_fees()
 # show_utxos("bob")
-total_block_fees()
+# total_block_fees()
+search_transactions_by_address("bcrt1qymlj2leaugxhsw5rhxw4rdvwggqnt7qns00v7v")

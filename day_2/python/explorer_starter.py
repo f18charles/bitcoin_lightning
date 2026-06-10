@@ -117,8 +117,20 @@ def show_block(blockhash=None):
     print(f"Time: {block['time']}")
     print(f"Transactions: {block['nTx']}")
 
+def show_mempool_fees():
+    data = rpc("getmempoolinfo")
+    mempool = data['result']
+    
+    if not mempool:
+        print("Mempool is empty")
+        return
+    
+    total_fees = mempool['total_fee']
+    print(f"Total Fees: {total_fees:.8f} BTC")
+
 # show_blockchain_info()
 # show_wallet_balance("alice")
 # list_transactions("alice", 3)
 # decode_transactions("ce5a80ac46928829d4ed23edd00b1441a470c81ced80b6359730069f031304cd")
-show_block()
+# show_block()
+show_mempool()
